@@ -6,4 +6,6 @@ faiss-cpu
 pandas
 python-dotenv
 streamlit
+python-dotenv
+
 requests
