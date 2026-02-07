@@ -1,0 +1,134 @@
+Article 26 — Common Equity Tier 1 Capital (CET1)
+
+Common Equity Tier 1 capital consists of the highest quality capital elements of an institution.
+
+CET1 items include:
+
+(a) Ordinary share capital issued by the institution that meets regulatory eligibility criteria.
+(b) Share premium accounts related to CET1 instruments.
+(c) Retained earnings.
+(d) Accumulated other comprehensive income.
+(e) Other disclosed reserves.
+
+For COREP supervisory reporting, CET1 capital shall be reported in template C01.00 under row 010.
+
+---
+
+Article 28 — CET1 Instruments Eligibility
+
+Capital instruments shall qualify as Common Equity Tier 1 instruments only where the following conditions are met:
+
+• Instruments are issued directly by the institution.
+• Instruments are fully paid up.
+• Instruments are perpetual in nature.
+• Distributions are fully discretionary.
+• Instruments absorb losses on a going concern basis.
+
+Eligible CET1 instruments contribute to Own Funds and must be reported in COREP template C01.00.
+
+---
+
+Article 36 — CET1 Deductions
+
+Institutions shall deduct from Common Equity Tier 1 items:
+
+• Intangible assets.
+• Deferred tax assets dependent on future profitability.
+• Significant investments in financial sector entities.
+
+These deductions must be reflected in COREP Own Funds template adjustments to CET1 capital.
+
+---
+
+Article 51 — Additional Tier 1 Capital (AT1)
+
+Additional Tier 1 capital consists of subordinated capital instruments that meet regulatory criteria.
+
+AT1 instruments include:
+
+• Perpetual subordinated bonds.
+• Contingent convertible instruments (CoCos).
+• Instruments with discretionary coupons.
+
+AT1 capital shall be reported in COREP template C01.00 under row 020.
+
+---
+
+Article 52 — AT1 Eligibility Conditions
+
+AT1 instruments must:
+
+• Be perpetual.
+• Have no incentive to redeem.
+• Permit cancellation of distributions.
+• Absorb losses via conversion or write-down.
+
+Eligible instruments qualify for inclusion in Tier 1 capital.
+
+---
+
+Article 62 — Tier 2 Capital
+
+Tier 2 capital includes subordinated liabilities with minimum original maturity of five years.
+
+Examples include:
+
+• Subordinated term debt.
+• Loan capital instruments.
+
+Tier 2 capital is reported in COREP template C01.00 under row 030.
+
+---
+
+COREP C01.00 — Own Funds Template Instructions
+
+Template C01.00 captures the composition of regulatory Own Funds.
+
+Key rows include:
+
+010 — Common Equity Tier 1 Capital  
+020 — Additional Tier 1 Capital  
+030 — Tier 2 Capital  
+050 — Total Tier 1 Capital  
+060 — Total Own Funds
+
+Institutions must ensure totals reconcile with component capital items.
+
+---
+
+COREP Validation Rules — Own Funds
+
+The following validations apply:
+
+• Tier 1 Capital = CET1 + AT1.
+• Total Own Funds = Tier 1 + Tier 2.
+• CET1 must be ≥ 0.
+• Capital instruments must meet eligibility criteria.
+
+Validation breaches must be flagged in supervisory reporting submissions.
+
+---
+
+PRA Rulebook — Own Funds General Requirements
+
+Firms must maintain sufficient Own Funds to meet prudential requirements at all times.
+
+Own Funds calculations must:
+
+• Reflect fully paid capital instruments.
+• Deduct ineligible items.
+• Align with CRR eligibility rules.
+
+Supervisory returns submitted via COREP must accurately reflect regulatory capital composition.
+
+---
+
+Audit & Traceability Requirement
+
+Institutions must maintain documentation demonstrating:
+
+• Source regulatory rules.
+• Instrument classification rationale.
+• Mapping of capital instruments to COREP fields.
+
+Supervisors may request evidence supporting reported Own Funds figures.
