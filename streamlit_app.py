@@ -40,8 +40,7 @@ st.sidebar.info(
 # ----------------------------------------
 # API Endpoint
 # ----------------------------------------
-
- API_URL = "https://corep-backend.onrender.com/report"
+API_URL = "https://corep-backend.onrender.com/report"
 
 
 
