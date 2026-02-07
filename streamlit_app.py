@@ -2,188 +2,96 @@ import streamlit as st
 import requests
 import pandas as pd
 
-# ----------------------------------------
-# Page Config
-# ----------------------------------------
+API_URL = "https://corep-backend.onrender.com/report"
 
-st.set_page_config(
-    page_title="COREP Reporting Assistant",
-    page_icon="📊",
-    layout="wide"
+st.set_page_config(page_title="COREP Assistant", layout="wide")
+
+st.title("📊 COREP Regulatory Reporting Assistant")
+
+query = st.text_area(
+    "Enter reporting scenario:",
+    height=120
 )
 
-st.title("📊 LLM-Assisted COREP Reporting Assistant")
-st.markdown(
-    "Prototype — PRA COREP regulatory reporting powered by Groq LLM + RAG"
+template_option = st.selectbox(
+    "Select Template",
+    ["C01.00 – Own Funds", "C02.00 – Capital Requirements"]
 )
 
-# ----------------------------------------
-# Sidebar — Template Selector
-# ----------------------------------------
+if st.button("Generate Report"):
 
-st.sidebar.header("⚙️ Report Settings")
+    if not query:
+        st.warning("Enter a scenario.")
+        st.stop()
 
-template_option = st.sidebar.selectbox(
-    "Select COREP Template",
-    [
-        "C01.00 — Own Funds",
-        "C02.00 — Capital Requirements",
-        "C07.00 — Credit Risk"
-    ]
-)
+    with st.spinner("Generating..."):
 
-st.sidebar.info(
-    "Prototype currently supports Own Funds logic.\n"
-    "Other templates are UI placeholders."
-)
+        res = requests.post(
+            API_URL,
+            params={"query": query}
+        )
 
-# ----------------------------------------
-# API Endpoint
-# ----------------------------------------
+        if res.status_code != 200:
+            st.error("API Error")
+            st.stop()
 
-API_URL = "http://backend:8000/report"
+        data = res.json()
 
+    # =========================
+    # TEMPLATE TABLE
+    # =========================
 
-# ----------------------------------------
-# Session State (Chat Memory)
-# ----------------------------------------
+    st.subheader("📄 Template Extract")
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+    df = pd.DataFrame(data["template_extract"])
 
-# ----------------------------------------
-# Display Chat History
-# ----------------------------------------
+    st.dataframe(df, use_container_width=True)
 
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-# ----------------------------------------
-# Chat Input
-# ----------------------------------------
-
-query = st.chat_input(
-    "Describe the reporting scenario..."
-)
-
-if query:
-
-    st.session_state.messages.append(
-        {"role": "user", "content": query}
+    # Export button
+    st.download_button(
+        "⬇ Download CSV",
+        df.to_csv(index=False),
+        "corep_template.csv"
     )
 
-    with st.chat_message("user"):
-        st.markdown(query)
+    # =========================
+    # CONFIDENCE BADGES
+    # =========================
 
-    # ----------------------------------------
-    # Call Backend
-    # ----------------------------------------
+    st.subheader("🧠 Confidence")
 
-    with st.chat_message("assistant"):
+    for field in data["structured_output"]["fields"]:
+        st.success(
+            f"{field['label']} → High confidence"
+        )
 
-        with st.spinner("Analyzing regulations..."):
+    # =========================
+    # MISSING DATA
+    # =========================
 
-            try:
+    missing = data["structured_output"]["missing_data"]
 
-                response = requests.post(
-                    API_URL,
-                    params={"query": query}
-                )
+    if missing:
+        st.warning("⚠ Missing Data:")
+        for m in missing:
+            st.write(m)
 
-                data = response.json()
+    # =========================
+    # VALIDATION FLAGS
+    # =========================
 
-                if "error" in data:
-                    st.error(data["error"])
-                    st.stop()
+    flags = data["structured_output"]["validation_flags"]
 
-                structured = data["structured_output"]
-                template = data["template_extract"]
-                audit_log = data["audit_log"]
+    if flags:
+        st.error("🚨 Validation Issues:")
+        for f in flags:
+            st.write(f)
 
-                # ----------------------------------------
-                # Alerts
-                # ----------------------------------------
-                
-                alerts_container = st.container()
-                if structured.get("missing_data"):
-                    alerts_container.warning(
-                        "⚠️ Missing Data Detected: "
-                        + ", ".join(structured["missing_data"])
-                    )
-                
-                if structured.get("validation_flags"):
-                    alerts_container.error(
-                        "🚩 Validation Flags: "
-                        + ", ".join(structured["validation_flags"])
-                    )
+    # =========================
+    # AUDIT LOG
+    # =========================
 
-                # Main content layout
-                col1, col2 = st.columns(2)
+    st.subheader("📜 Audit Log")
 
-                # ----------------------------------------
-                # Column 1: Structured COREP Output
-                # ----------------------------------------
-                with col1:
-                    st.subheader("🧾 Structured COREP Output")
-                    
-                    for field in structured["fields"]:
-                        confidence = field.get("confidence", "High")
-                        if confidence == "High":
-                            badge_color = "green"
-                            badge_text = "High"
-                        elif confidence == "Medium":
-                            badge_color = "orange"
-                            badge_text = "Medium"
-                        else:
-                            badge_color = "red"
-                            badge_text = "Low"
-
-                        with st.container(border=True):
-                            st.markdown(f"**{field['label']}**")
-                            st.markdown(f"### £{field['value']:,}")
-                            
-                            sub_col1, sub_col2 = st.columns([1,2])
-                            with sub_col1:
-                                st.markdown(f":{badge_color}[{badge_text} Confidence]")
-                            with sub_col2:
-                                st.caption(f"Rule: {field['source_rule']}")
-
-
-                # ----------------------------------------
-                # Column 2: Template Table & Export
-                # ----------------------------------------
-                with col2:
-                    st.subheader("📊 COREP Template Extract")
-                    
-                    df = pd.DataFrame(template)
-                    st.dataframe(
-                        df,
-                        use_container_width=True
-                    )
-
-                    st.download_button(
-                        label="⬇️ Download Template CSV",
-                        data=df.to_csv(index=False),
-                        file_name="corep_template.csv",
-                        mime="text/csv"
-                    )
-
-                # ----------------------------------------
-                # Audit Log (Full Width)
-                # ----------------------------------------
-                st.subheader("📚 Audit Log (Rule Citations)")
-                for i, log in enumerate(audit_log, 1):
-                    with st.expander(f"Rule Source {i}"):
-                        st.markdown(log)
-
-                # Save assistant message
-                st.session_state.messages.append(
-                    {
-                        "role": "assistant",
-                        "content": "Generated COREP report successfully."
-                    }
-                )
-
-            except Exception as e:
-                st.error(f"API Error: {str(e)}")
+    for rule in data["audit_log"]:
+        st.info(rule)
