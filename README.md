@@ -34,7 +34,7 @@ User → Streamlit → FastAPI → Retrieval → LLM → Template → UI
                     │  (Chat Interface)   │
                     └─────────┬────────────┘
                               │
-                              │ User Query
+                              │ User Query here
                               ▼
                     ┌──────────────────────┐
                     │      FastAPI         │
